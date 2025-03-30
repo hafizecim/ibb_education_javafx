@@ -23,7 +23,7 @@ public class UserDTO {
     // Getter And Setter
     // Method
 
-
+/*
      public static void main(String[] args) {
          UserDTO userDTO= UserDTO.builder()
                  .id(0)
@@ -35,6 +35,6 @@ public class UserDTO {
          System.out.println(userDTO);
      }
 
-
+*/
 
 } //end Class
