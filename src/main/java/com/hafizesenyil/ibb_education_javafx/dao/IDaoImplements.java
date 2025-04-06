@@ -1,6 +1,8 @@
 package com.hafizesenyil.ibb_education_javafx.dao;
 
 
+import com.hafizesenyil.ibb_education_javafx.database.SingletonPropertiesDBConnection;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,6 @@ public interface IDaoImplements <T> {
 
     // Gövdeli Method
     default Connection iDaoImplementsDatabaseConnection(){
-        return null;
+        return SingletonPropertiesDBConnection.getInstance().getConnection();
     }
 }

@@ -1,17 +1,16 @@
 package com.hafizesenyil.ibb_education_javafx.database;
 
 import com.hafizesenyil.ibb_education_javafx.utils.SpecialColor;
-import  java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
+import java.sql.*;
 
 
 public class SingletonPropertiesDBConnection {
 
     // Field
     // Database  Information Data
-    //private static String URL = "jdbc:h2:./h2db/user_management" + "AUTO_SERVER=TRUE";
-    private static String URL = "jdbc:h2:~/h2db/user_management" + "AUTO_SERVER=TRUE";
+    private static String URL = "jdbc:h2:./h2db/user_management"; // . bulunduğu dizin
+    //private static String URL = "jdbc:h2:~/h2db/user_management" + "AUTO_SERVER=TRUE"; // ~ kök dizin
     private static String USERNAME = "sa";
     private static String PASSWORD = "";
 
@@ -59,8 +58,39 @@ public class SingletonPropertiesDBConnection {
         }
     }
     // Database Text
-    public static void main(String[] args){
+    public static void main(String[] args) throws SQLException {
+        // Singleton Instance ile Bağlantıyı al
+        SingletonPropertiesDBConnection dbConnection = SingletonPropertiesDBConnection.getInstance();
+        Connection conn = dbConnection.getConnection();
 
+        Statement stmt = conn.createStatement();
+
+        // Örnek bir tablo oluştur
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS Users ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "name VARCHAR(255), "
+                + "email VARCHAR(255))";
+        stmt.execute(createTableSQL);
+        System.out.println("Users tablosu oluşturuldu!");
+
+        // Veri Ekleme
+        String insertDataSQL = "INSERT INTO Users (name, email) VALUES "
+                + "('Ali Veli', 'ali@example.com'), "
+                + "('Ayşe Fatma', 'ayse@example.com')";
+        stmt.executeUpdate(insertDataSQL);
+        System.out.println("Veriler eklendi!");
+
+        // Veri Okuma
+        String selectSQL = "SELECT * FROM Users";
+        ResultSet rs = stmt.executeQuery(selectSQL);
+
+        System.out.println("\nUsers Tablosu İçeriği:");
+        while (rs.next()) {
+            System.out.println("ID: " + rs.getInt("id") +
+                    ", Name: " + rs.getString("name") +
+                    ", Email: " + rs.getString("email"));
+        }
+        // Bağlantıyı Kapat
+        SingletonPropertiesDBConnection.closeConnection();
     }
-
 } // end class
