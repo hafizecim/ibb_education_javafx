@@ -2,6 +2,7 @@ package com.hafizesenyil.ibb_education_javafx.dao;
 
 
 import com.hafizesenyil.ibb_education_javafx.database.SingletonPropertiesDBConnection;
+import com.hafizesenyil.ibb_education_javafx.dto.UserDTO;
 
 import java.sql.Connection;
 import java.util.List;
@@ -13,7 +14,7 @@ public interface IDaoImplements <T> {
     Optional<T> create(T t);
 
     // LIST
-    List<T> list();
+    Optional<List<T>>  list();
 
     // FIND
     Optional<T> findByName(String name);
