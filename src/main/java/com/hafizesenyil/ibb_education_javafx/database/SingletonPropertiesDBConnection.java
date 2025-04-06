@@ -2,17 +2,21 @@ package com.hafizesenyil.ibb_education_javafx.database;
 
 import com.hafizesenyil.ibb_education_javafx.utils.SpecialColor;
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
+
 
 
 public class SingletonPropertiesDBConnection {
 
     // Field
     // Database  Information Data
-    private static String URL = "jdbc:h2:./h2db/user_management"; // . bulunduğu dizin
-    //private static String URL = "jdbc:h2:~/h2db/user_management" + "AUTO_SERVER=TRUE"; // ~ kök dizin
-    private static String USERNAME = "sa";
-    private static String PASSWORD = "";
+    private static String URL; // config bak
+    private static String USERNAME;
+    private static String PASSWORD;
 
     // Singleton Design pattern
     private static SingletonPropertiesDBConnection instance;
@@ -22,46 +26,59 @@ public class SingletonPropertiesDBConnection {
     private SingletonPropertiesDBConnection() {
         try {
             // JDBC Yükle
+            loadDatabaseConfig(); //konfigürasyon oku
             Class.forName("org.h2.Driver");
             this.connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             System.out.println("Veritabanı bağlantısı başarılı");
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             System.out.println(SpecialColor.RED + "Veri tabani baglantisi basarisiz" + SpecialColor.RESET);
             throw new RuntimeException("Veritabanı bağlantısı başarısız!");
         }
     }
+    // Konfigürasyonu yükleme
+    private static void loadDatabaseConfig() {
+        try (FileInputStream fis = new FileInputStream("config.properties")) {
+            Properties properties = new Properties();
+            properties.load(fis);
+            URL = properties.getProperty("db.url", "jdbc:h2:./h2db/user_management");
+            //URL = properties.getProperty("db.url", "jdbc:h2:~/h2db/user_management");
+            USERNAME = properties.getProperty("db.username", "sa");
+            PASSWORD = properties.getProperty("db.password", "");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Veritabanı yapılandırması yüklenemedi!");
+        }
+    }
 
-    // Singleton Design Instance
+    // Singleton Instance
     public static synchronized SingletonPropertiesDBConnection getInstance() {
-        if (instance==null){
-            instance=new SingletonPropertiesDBConnection();
+        if (instance == null) {
+            instance = new SingletonPropertiesDBConnection();
         }
         return instance;
     }
 
-    //Bağlantı nesnesi çağırma (sağ klik getter and setter --> alt + Ins (0))
     public Connection getConnection() {
         return connection;
     }
 
-    // Database kapatmak
-    public static void closeConnection()
-    {
-        if(instance!=null && instance.connection!=null){
+    public static void closeConnection() {
+        if (instance != null && instance.connection != null) {
             try {
                 instance.connection.close();
-                System.out.printf(SpecialColor.RED + "Veri tabani baglantisi kapatildi" + SpecialColor.RESET);
-            }catch (SQLException e){
-                throw new RuntimeException(e);
+                System.out.println("Veritabanı bağlantısı kapatıldı.");
+            } catch (SQLException e) {
+                throw new RuntimeException("Bağlantı kapatılırken hata oluştu!", e);
             }
         }
     }
-    // Database Text
-    public static void dataSet() throws SQLException{
-        // Singleton Instance ile Bağlantıyı al
-        SingletonPropertiesDBConnection dbConnection = SingletonPropertiesDBConnection.getInstance();
-        Connection conn = dbConnection.getConnection();
+
+    // Database Test
+    public static void dataSet()  throws SQLException{
+        // Singleton Instance ile Bağlantıyı Al
+        SingletonPropertiesDBConnection dbInstance = SingletonPropertiesDBConnection.getInstance();
+        Connection conn = dbInstance.getConnection();
 
         Statement stmt = conn.createStatement();
 
@@ -90,11 +107,11 @@ public class SingletonPropertiesDBConnection {
                     ", Name: " + rs.getString("name") +
                     ", Email: " + rs.getString("email"));
         }
+
         // Bağlantıyı Kapat
         SingletonPropertiesDBConnection.closeConnection();
     }
     public static void main(String[] args) throws SQLException {
-        // Test etmek için şağıdaki yorum satırını aç
-        //dataSet();
+        dataSet();
     }
-} // end class
+}
