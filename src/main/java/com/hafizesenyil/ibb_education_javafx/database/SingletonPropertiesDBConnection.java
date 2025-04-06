@@ -58,7 +58,7 @@ public class SingletonPropertiesDBConnection {
         }
     }
     // Database Text
-    public static void main(String[] args) throws SQLException {
+    public static void dataSet() throws SQLException{
         // Singleton Instance ile Bağlantıyı al
         SingletonPropertiesDBConnection dbConnection = SingletonPropertiesDBConnection.getInstance();
         Connection conn = dbConnection.getConnection();
@@ -92,5 +92,9 @@ public class SingletonPropertiesDBConnection {
         }
         // Bağlantıyı Kapat
         SingletonPropertiesDBConnection.closeConnection();
+    }
+    public static void main(String[] args) throws SQLException {
+        // Test etmek için şağıdaki yorum satırını aç
+        //dataSet();
     }
 } // end class
