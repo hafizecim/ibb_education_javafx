@@ -26,6 +26,7 @@ public interface IDaoImplements <T> {
     // DELETE
     Optional<T> delete(int id);
 
+
     // Gövdeli Method
     default Connection iDaoImplementsDatabaseConnection(){
         return SingletonPropertiesDBConnection.getInstance().getConnection();
