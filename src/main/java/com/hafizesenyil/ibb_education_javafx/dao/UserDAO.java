@@ -86,6 +86,8 @@ public class UserDAO implements IDaoImplements<UserDTO> {
     public Optional<UserDTO> findByName(String name) {
         //String sql = "SELECT * FROM users WHERE username=?";
         String sql = "SELECT * FROM users WHERE email=?";
+        return selectSingle(sql,name);
+        /* (kısalttık Generik yapıdan sonra (generik yapı oluşturduk)
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
 
@@ -104,13 +106,15 @@ public class UserDAO implements IDaoImplements<UserDTO> {
             exception.printStackTrace();
         }
         // Eğer Bulunamazsa boş dönder
-        return Optional.empty();
+        return Optional.empty(); */
     }
 
     // FIND BY ID
     @Override
     public Optional<UserDTO> findById(int id) {
         String sql = "SELECT * FROM users WHERE id=?";
+        return selectSingle(sql,id);
+        /* (kısalttık Generik yapıdan sonra)
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
 
@@ -130,7 +134,7 @@ public class UserDAO implements IDaoImplements<UserDTO> {
         }
         // Eğer Bulunamazsa boş dönder
         System.out.println(SpecialColor.GREEN + " Aradaığınız " + id + " id bulunamadı.");
-        return Optional.empty();
+        return Optional.empty(); */
     }
 
     // UPDATE
@@ -182,6 +186,41 @@ public class UserDAO implements IDaoImplements<UserDTO> {
             }
         }
         // Eğer Silinecek id veri yoksa boş dönder.
+        return Optional.empty();
+    }
+
+    /// ////////////////////////////////////////////////////////////////
+    // GENERICS METOTO (LIST,FIND)
+    // ResultSet'ten UserDTO oluşturmayı tek bir yardımcı metot
+    // ResultSetten UserDTO oluştur
+    @Override
+    public UserDTO mapToObjectDTO(ResultSet resultSet) throws SQLException {
+        return UserDTO.builder()
+                .id(resultSet.getInt("id"))
+                .username(resultSet.getString("username"))
+                .password(resultSet.getString("password"))
+                .email(resultSet.getString("email"))
+                .build();
+    }
+
+    // dizi elemanları(Değişkenler birden fazla olabilir)
+    // ID veya NAME ile veri çektiğimizde bu ortak metot kullanılır
+    // Generics ile Tek kayıt Döndüren Metot
+    @Override
+    public Optional<UserDTO> selectSingle(String sql, Object... params) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatement.setObject((i + 1), params[i]);
+            }
+
+            try(ResultSet resultSet =preparedStatement.executeQuery()){
+                if(resultSet.next()){
+                    return Optional.of(mapToObjectDTO(resultSet));
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
         return Optional.empty();
     }
 
