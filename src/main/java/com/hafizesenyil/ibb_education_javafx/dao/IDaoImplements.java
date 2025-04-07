@@ -10,7 +10,7 @@ import java.util.List;
 import java.sql.ResultSet;
 import java.util.Optional;
 
-public interface IDaoImplements <T> {
+public interface IDaoImplements <T> extends ILogin{
 
     // CREATE
     Optional<T> create(T t);
@@ -29,6 +29,7 @@ public interface IDaoImplements <T> {
     Optional<T> delete(int id);
 
     /// ////////////////////////////////////////////////////////////////
+    /// Daha sonra bu metod dao da açılan : IGenericsMethod interface ile ayrılştılmıştır
     // GENERICS METOTO (LIST,FIND)
     // ResultSet'ten UserDTO oluşturmayı tek bir yardımcı metot
     // ResultSetten UserDTO oluştur

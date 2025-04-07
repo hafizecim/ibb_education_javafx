@@ -20,6 +20,7 @@ public class UserDAO implements IDaoImplements<UserDTO> {
 
     // Parametresiz Constructor
     public UserDAO() {
+        // Default değerler
         this.connection= SingletonPropertiesDBConnection.getInstance().getConnection();
     }
 
@@ -224,4 +225,21 @@ public class UserDAO implements IDaoImplements<UserDTO> {
         return Optional.empty();
     }
 
+    /// /////////////////////////////////////////////////////////////////////
+    /// LOGIN (ILogin interface) (geliyor)
+    @Override
+    public Optional loginUser(String username, String password) {
+        String sql = "SELECT * FROM users WHERE username=?, AND password=?";
+        return selectSingle(sql, username, password);
+    }
 } //end class
+
+
+
+
+
+
+
+
+
+
