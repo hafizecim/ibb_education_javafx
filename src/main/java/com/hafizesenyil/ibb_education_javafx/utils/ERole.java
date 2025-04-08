@@ -1,18 +1,15 @@
-package com.hafizesenyil.ibb_education_javafx.dto;
-
+package com.hafizesenyil.ibb_education_javafx.utils;
 
 /**
  * 📌 Kullanıcı Rollerini Tanımlayan Enum
  */
 public enum ERole {
-    STUDENT("Öğrenci"),
-    TEACHER("Öğretmen"),
+    USER("Kullanıcı"),
+    MODERATOR("Moderatör"),
     ADMIN("Yönetici");
 
-    // Field
     private final String description;
 
-    // Parametreli
     ERole(String description) {
         this.description = description;
     }
@@ -30,5 +27,10 @@ public enum ERole {
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("❌ Geçersiz rol: " + role);
         }
+    }
+
+    @Override
+    public String toString() {
+        return description; // ComboBox’ta görünen metin
     }
 }

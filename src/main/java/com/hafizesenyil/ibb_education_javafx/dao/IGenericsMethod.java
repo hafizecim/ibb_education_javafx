@@ -15,4 +15,5 @@ public interface IGenericsMethod<T> {
     // ID veya NAME ile veri çektiğimizde bu ortak metot kullanılır
     // Generics ile Tek kayıt Döndüren Metot
     public Optional<T> selectSingle(String sql, Object... params);
+
 }

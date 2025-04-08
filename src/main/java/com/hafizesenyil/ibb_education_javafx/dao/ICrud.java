@@ -1,6 +1,5 @@
 package com.hafizesenyil.ibb_education_javafx.dao;
 
-
 import java.util.List;
 import java.util.Optional;
 

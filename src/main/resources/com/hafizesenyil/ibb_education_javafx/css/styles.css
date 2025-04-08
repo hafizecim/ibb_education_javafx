@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hafizesenyil.ibb_education_javafx.controller.AdminController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hamitmizrak.ibb_ecodation_javafx.controller.AdminController">
 
     <!-- HEADER -->
     <top>
@@ -25,7 +25,7 @@
             </HBox>
 
             <MenuBar fx:id="menuBar" style="-fx-background-color: white; -fx-text-fill: #2c3e50;">
-                <menus>
+            <menus>
                     <Menu text="Dosya">
                         <MenuItem text="Çıkış" onAction="#logout" />
                     </Menu>
@@ -39,10 +39,10 @@
                         <MenuItem text="KDV Güncelle" onAction="#updateKdv" />
                         <MenuItem text="KDV Sil" onAction="#deleteKdv" />
                     </Menu>
-                    <Menu text="Diğer İşlemler">
-                        <MenuItem text="Hesap Makinesi" onAction="#openCalculator" />
-                        <MenuItem text="Not Defteri" onAction="#notebook" />
-                    </Menu>
+                <Menu text="Diğer İşlemler">
+                    <MenuItem text="Hesap Makinesi" onAction="#openCalculator" />
+                    <MenuItem text="Not Defteri" onAction="#notebook" />
+                </Menu>
                     <Menu text="Yardım">
                         <MenuItem text="Hakkında" onAction="#showAbout" />
                     </Menu>
@@ -51,7 +51,7 @@
         </VBox>
     </top>
 
-    <!-- ANA GÖRÜNÜM -->
+ <!-- ANA GÖRÜNÜM -->
     <center>
         <SplitPane orientation="HORIZONTAL" style="-fx-background-image: url('/images/login.webp'); -fx-background-size: cover;">
 
@@ -118,7 +118,7 @@
                 </HBox>
 
                 <HBox spacing="10" alignment="CENTER">
-                    <Button fx:id="btnKdvPrint" text="Yazdır" onAction="#printKdvTable"
+                     <Button fx:id="btnKdvPrint" text="Yazdır" onAction="#printKdvTable"
                             style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-background-radius: 8;" />
                     <Button fx:id="btnKdvMail" text="Mail Gönder" onAction="#sendKdvByMail"
                             style="-fx-background-color: #d35400; -fx-text-fill: white; -fx-background-radius: 8;" />
@@ -130,7 +130,7 @@
     <!-- FOOTER -->
     <bottom>
         <HBox alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 12;">
-            <Label text="© 2025 MSC HAFİZE ŞENYIL Teknoloji | Kullanıcı ve KDV Yönetimi Sistemi" style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;" />
+            <Label text="© 2025 MSC HAMİT MIZRAK Teknoloji | Kullanıcı ve KDV Yönetimi Sistemi" style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;" />
         </HBox>
     </bottom>
 

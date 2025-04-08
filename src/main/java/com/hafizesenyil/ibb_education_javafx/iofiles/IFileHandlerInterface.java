@@ -1,6 +1,5 @@
 package com.hafizesenyil.ibb_education_javafx.iofiles;
 
-
 /**
  * 📌 Dosya işlemleri için temel arayüz
  * Her dosya yönetim sınıfının bu arayüzü uygulaması beklenir.

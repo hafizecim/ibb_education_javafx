@@ -21,10 +21,10 @@ INSERT INTO users(username,password,email) VALUES ("Hafize","123456","hfz.snyl@g
 select * FROM users;
 
 -- Find User
-SELECT  *  FROM users WHERE username="Hamit" AND "123456";
+SELECT  *  FROM users WHERE username="Hafize" AND "123456";
 
 -- Update
-UPDATE users SET username="Hafize33", password="12345644", email="hfz.snyl@gmail.com" WHERE id=1;
+UPDATE users SET username="Hafize44", password="12345644", email="hfz.snyl@gmail.com44" WHERE id=1;
 
 -- delete
 DELETE FROM users  WHERE id=1;

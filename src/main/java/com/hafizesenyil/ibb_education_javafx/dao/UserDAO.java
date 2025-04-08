@@ -1,9 +1,15 @@
-package com.hafizesenyil.ibb_education_javafx.dao;
+// Güncellenmiş dosyalar devamı
 
+// ================================
+// UserDAO.java (BCrypt ile Güncellenmiş)
+// ================================
+
+package com.hafizesenyil.ibb_education_javafx.dao;
 
 import com.hafizesenyil.ibb_education_javafx.database.SingletonPropertiesDBConnection;
 import com.hafizesenyil.ibb_education_javafx.dto.UserDTO;
-import com.hafizesenyil.ibb_education_javafx.utils.SpecialColor;
+import com.hafizesenyil.ibb_education_javafx.utils.ERole;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,172 +19,102 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-// UserDAO
-public class UserDAO implements IDaoImplements<UserDTO> {
-    // Injection
+public class UserDAO implements IDaoImplements<UserDTO>, ILogin<UserDTO> {
+
     private Connection connection;
 
-    // Parametresiz Constructor
     public UserDAO() {
-        // Default değerler
-        this.connection= SingletonPropertiesDBConnection.getInstance().getConnection();
+        this.connection = SingletonPropertiesDBConnection.getInstance().getConnection();
     }
 
-
-    /// ////////////////////////////////////////////////////////////////////
-    // CRUD
-    // CREATE
     @Override
     public Optional<UserDTO> create(UserDTO userDTO) {
-        String sql= "INSERT INTO users (username,password,email) VALUES(?,?,?)";
-        try(PreparedStatement preparedStatement= connection.prepareStatement(sql)){
+        String sql = "INSERT INTO usertable (username, password, email, role) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
             preparedStatement.setString(1, userDTO.getUsername());
-            preparedStatement.setString(2, userDTO.getPassword());
+            preparedStatement.setString(2, hashedPassword);
             preparedStatement.setString(3, userDTO.getEmail());
-            // CREATE, DELETE, UPDATE
+            preparedStatement.setString(4, userDTO.getRole().name());
             int affectedRows = preparedStatement.executeUpdate();
 
-            // Eğer Ekleme başarılıysa
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        userDTO.setId(generatedKeys.getInt(1)); // OTomatik ID set et
+                        userDTO.setId(generatedKeys.getInt(1));
+                        userDTO.setPassword(hashedPassword);
                         return Optional.of(userDTO);
                     }
-                } catch (SQLException sqlException) {
-                    sqlException.printStackTrace();
                 }
             }
-        }catch (Exception exception){
-
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
-        // Eğer Ekleme başarısızsa boş veri dönder
         return Optional.empty();
     }
 
-    // LIST
     @Override
-    public Optional<List<UserDTO>>list() {
+    public Optional<List<UserDTO>> list() {
         List<UserDTO> userDTOList = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM usertable";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = preparedStatement.executeQuery(sql);
-
-            // Veritabanından gelen verileri almak
-            while(resultSet.next()){
-                userDTOList.add(UserDTO.builder()
-                        .id(resultSet.getInt("id"))
-                        .username(resultSet.getString("username"))
-                        .password(resultSet.getString("password"))
-                        .email(resultSet.getString("email"))
-                        .build());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                userDTOList.add(mapToObjectDTO(resultSet));
             }
             return userDTOList.isEmpty() ? Optional.empty() : Optional.of(userDTOList);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        // Eğer Listeleme başarısızsa boş veri dönder
         return Optional.empty();
     }
 
-    // FIND BY NAME
     @Override
     public Optional<UserDTO> findByName(String name) {
-        //String sql = "SELECT * FROM users WHERE username=?";
-        String sql = "SELECT * FROM users WHERE email=?";
-        return selectSingle(sql,name);
-        /* (kısalttık Generik yapıdan sonra (generik yapı oluşturduk)
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
-
-            ResultSet resultSet = preparedStatement.executeQuery(sql);
-            // Veritabanından gelen veri varsa
-            if (resultSet.next()) {
-                UserDTO userDTO = UserDTO.builder()
-                        .id(resultSet.getInt("id"))
-                        .username(resultSet.getString("username"))
-                        .email(resultSet.getString("email"))
-                        .password(resultSet.getString("password"))
-                        .build();
-                return Optional.of(userDTO);
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        // Eğer Bulunamazsa boş dönder
-        return Optional.empty(); */
+        String sql = "SELECT * FROM usertable WHERE email=?";
+        return selectSingle(sql, name);
     }
 
-    // FIND BY ID
     @Override
     public Optional<UserDTO> findById(int id) {
-        String sql = "SELECT * FROM users WHERE id=?";
-        return selectSingle(sql,id);
-        /* (kısalttık Generik yapıdan sonra)
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, id);
-
-            ResultSet resultSet = preparedStatement.executeQuery(sql);
-            // Veritabanından gelen veri varsa
-            if (resultSet.next()) {
-                UserDTO userDTO = UserDTO.builder()
-                        .id(resultSet.getInt("id"))
-                        .username(resultSet.getString("username"))
-                        .email(resultSet.getString("email"))
-                        .password(resultSet.getString("password"))
-                        .build();
-                return Optional.of(userDTO);
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        // Eğer Bulunamazsa boş dönder
-        System.out.println(SpecialColor.GREEN + " Aradaığınız " + id + " id bulunamadı.");
-        return Optional.empty(); */
+        String sql = "SELECT * FROM usertable WHERE id=?";
+        return selectSingle(sql, id);
     }
 
-    // UPDATE
     @Override
-        public Optional<UserDTO> update(int id, UserDTO userDTO) {
-            Optional<UserDTO> optionalUpdate = findById(id);
-            if (optionalUpdate.isPresent()) {
-                String sql = "UPDATE users SET username=?, password=?, email=?  WHERE id=?";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                    preparedStatement.setString(1, userDTO.getUsername());
-                    preparedStatement.setString(2, userDTO.getPassword());
-                    preparedStatement.setString(3, userDTO.getEmail());
-                    preparedStatement.setInt(4, userDTO.getId());
+    public Optional<UserDTO> update(int id, UserDTO userDTO) {
+        Optional<UserDTO> optionalUpdate = findById(id);
+        if (optionalUpdate.isPresent()) {
+            String sql = "UPDATE usertable SET username=?, password=?, email=?, role=? WHERE id=?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
+                preparedStatement.setString(1, userDTO.getUsername());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, userDTO.getEmail());
+                preparedStatement.setString(4, userDTO.getRole().name());
+                preparedStatement.setInt(5, id);
 
-                    // CREATE, DELETE, UPDATE
-                    int affectedRows = preparedStatement.executeUpdate();
-
-                    // Eğer Güncelleme başarılıysa
-                    if (affectedRows > 0) {
-                        userDTO.setId(id); // Güncellenen userDTO için id'yi ekle
-                        return Optional.of(userDTO);
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows > 0) {
+                    userDTO.setId(id);
+                    userDTO.setPassword(hashedPassword);
+                    return Optional.of(userDTO);
                 }
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
-            // Eğer Güncellenecek id veri yoksa boş dönder.
+        }
         return Optional.empty();
     }
 
-    // DELETE
     @Override
     public Optional<UserDTO> delete(int id) {
         Optional<UserDTO> optionalDelete = findById(id);
         if (optionalDelete.isPresent()) {
-            String sql = "DELETE FROM users WHERE id=?";
+            String sql = "DELETE FROM usertable WHERE id=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, id);
-
-                // CREATE, DELETE, UPDATE
                 int affectedRows = preparedStatement.executeUpdate();
-
-                // Eğer Güncelleme başarılıysa
                 if (affectedRows > 0) {
                     return optionalDelete;
                 }
@@ -186,14 +122,9 @@ public class UserDAO implements IDaoImplements<UserDTO> {
                 exception.printStackTrace();
             }
         }
-        // Eğer Silinecek id veri yoksa boş dönder.
         return Optional.empty();
     }
 
-    /// ////////////////////////////////////////////////////////////////
-    // GENERICS METOTO (LIST,FIND)
-    // ResultSet'ten UserDTO oluşturmayı tek bir yardımcı metot
-    // ResultSetten UserDTO oluştur
     @Override
     public UserDTO mapToObjectDTO(ResultSet resultSet) throws SQLException {
         return UserDTO.builder()
@@ -201,21 +132,18 @@ public class UserDAO implements IDaoImplements<UserDTO> {
                 .username(resultSet.getString("username"))
                 .password(resultSet.getString("password"))
                 .email(resultSet.getString("email"))
+                .role(ERole.fromString(resultSet.getString("role")))
                 .build();
     }
 
-    // dizi elemanları(Değişkenler birden fazla olabilir)
-    // ID veya NAME ile veri çektiğimizde bu ortak metot kullanılır
-    // Generics ile Tek kayıt Döndüren Metot
     @Override
     public Optional<UserDTO> selectSingle(String sql, Object... params) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject((i + 1), params[i]);
             }
-
-            try(ResultSet resultSet =preparedStatement.executeQuery()){
-                if(resultSet.next()){
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
                     return Optional.of(mapToObjectDTO(resultSet));
                 }
             }
@@ -225,21 +153,43 @@ public class UserDAO implements IDaoImplements<UserDTO> {
         return Optional.empty();
     }
 
-    /// /////////////////////////////////////////////////////////////////////
-    /// LOGIN (ILogin interface) (geliyor)
     @Override
-    public Optional loginUser(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username=?, AND password=?";
-        return selectSingle(sql, username, password);
+    public Optional<UserDTO> loginUser(String usernameOrEmail, String password) {
+        String sql = "SELECT * FROM usertable WHERE username = ? OR email = ?";
+        Optional<UserDTO> userOpt = selectSingle(sql, usernameOrEmail, usernameOrEmail);
+
+        if (userOpt.isPresent()) {
+            UserDTO user = userOpt.get();
+            if (BCrypt.checkpw(password, user.getPassword())) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
     }
-} //end class
+
+    public boolean isUsernameExists(String username) {
+        String sql = "SELECT 1 FROM usertable WHERE username = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // kayıt varsa true döner
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true; // hata varsa güvenlik için false yerine true döneriz
+        }
+    }
+
+    public boolean isEmailExists(String email) {
+        String sql = "SELECT 1 FROM usertable WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true; // hata varsa true dön ki işlem durdurulsun
+        }
+    }
 
 
-
-
-
-
-
-
-
-
+}

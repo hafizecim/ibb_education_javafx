@@ -39,7 +39,11 @@ module com.hafizesenyil.ibb_education_javafx {
     // Java'daki SQL işlemlerini (Connection, Statement, ResultSet vb.) gerçekleştirebilmek için gereklidir.
     requires java.sql;
 
-    requires java.desktop;
+    requires java.mail;
+    requires org.apache.poi.ooxml;
+    requires org.apache.pdfbox;
+    requires jbcrypt;
+    requires com.h2database;
 
     // #######################################################################################
     // Paket Erişimlerine İzin vermek

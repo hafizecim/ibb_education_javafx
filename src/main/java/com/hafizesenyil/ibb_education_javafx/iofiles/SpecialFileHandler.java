@@ -1,7 +1,6 @@
 package com.hafizesenyil.ibb_education_javafx.iofiles;
 
 import com.hafizesenyil.ibb_education_javafx.utils.SpecialColor;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

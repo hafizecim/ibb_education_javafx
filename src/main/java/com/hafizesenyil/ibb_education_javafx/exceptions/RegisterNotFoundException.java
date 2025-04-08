@@ -1,5 +1,6 @@
 package com.hafizesenyil.ibb_education_javafx.exceptions;
 
+
 // Öğrenci bulunamazsa Fırlatılacak Özel Excepiton
 public class RegisterNotFoundException extends RuntimeException {
 
