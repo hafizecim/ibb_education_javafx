@@ -3,14 +3,21 @@ package com.hafizesenyil.ibb_education_javafx.controller;
 
 import com.hafizesenyil.ibb_education_javafx.dao.UserDAO;
 import com.hafizesenyil.ibb_education_javafx.dto.UserDTO;
+import com.hafizesenyil.ibb_education_javafx.utils.SpecialColor;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 import java.util.Optional;
 
+// Java ile XML arasında Köprü görür.
 public class LoginController {
 
     // Injection
@@ -87,8 +94,57 @@ public class LoginController {
         }
     }
 
+    /// //////////////////////////////////////////////////////////////////////////////////////
     // Eğer Login başarılıysa Admin Panel(Dashboard)
     private void openAdminPane() {
-    }
+        try {
+            // FXML Dosyalarını Yükle (Kayıt ekranının FXML dosyasını yüklüyoruz)
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/hafizesenyil/ibb_education_javafx/view/admin.fxml"));
+            Parent parent = fxmlLoader.load();
 
+            // Var olan sahneyi alıp ve değiştirmek ve
+            // Admin sayfasına Veri gönderelim.
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(new Scene(parent));
+
+            // Pencere başlığını 'Admin Panel' olarak ayarlıyalım
+            stage.setTitle("Admin Panel: " + usernameField);
+
+            // Sahneyi göster
+            stage.show();
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+            System.out.println(SpecialColor.RED + "Admin Sayfasında yönlendirilmedi" + SpecialColor.RESET);
+            e.printStackTrace();
+            showAlert("Hata", "Admin Ekranı Yüklenemedi", Alert.AlertType.ERROR);
+        }
     }
+        /// //////////////////////////////////////////////////////////////////////////////////////
+        // Sayfalar Arasında Geçiş (LOGIN -> REGISTER)
+        // Register (Switch)
+        @FXML
+        private void switchToRegister(ActionEvent actionEvent) {
+            try {
+                // FXML Dosyalarını Yükle (Kayıt ekranının FXML dosyasını yüklüyoruz)
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/hafizesenyil/ibb_education_javafx/view/register.fxml"));
+                Parent parent = fxmlLoader.load();
+
+                // Var olan sahneyi alıp ve değiştirmek
+                Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(parent));
+
+                // Pencere başlığını 'Kayıt Ol' olarak ayarlıyalım
+                stage.setTitle("Kayıt Ol");
+
+                // Sahneyi göster
+                stage.show();
+            } catch (Exception e) {
+                //throw new RuntimeException(e);
+                System.out.println(SpecialColor.RED + "Register Sayfasında yönlendirilmedi" + SpecialColor.RESET);
+                e.printStackTrace();
+                showAlert("Hata", "Kayıt Ekranı Yüklenemedi", Alert.AlertType.ERROR);
+            }
+        } //end switchToLogin
+
+    } //end LoginController
+

@@ -6,8 +6,12 @@ module com.hafizesenyil.ibb_education_javafx {
     // JavaFX kontrol bileşenlerini (Button, Label, TextField vb.) kullanabilmek için gereklidir.
     requires javafx.controls;
 
+
     // JavaFX FXML dosyalarını (FXML UI tasarımları) yükleyebilmek için gereklidir.
     requires javafx.fxml;
+
+    // WEB
+    // requires javafx.web;
 
     // #######################################################################################
     // UI geliştirme için kullanılan harici kütüphaneler
@@ -41,19 +45,19 @@ module com.hafizesenyil.ibb_education_javafx {
     // Paket Erişimlerine İzin vermek
     // `opens` ifadesi, bir paketin runtime'da (çalışma zamanında) refleksiyon (reflection) kullanılarak erişilebilir olmasını sağlar.
     // Ana paket (Root package) açılıyor, böylece FXML dosyalarından erişilebilir.
-    opens com.hafizesenyil.ibb_education_javafx to javafx.fxml;
+       opens com.hafizesenyil.ibb_education_javafx to javafx.fxml;
 
     // Controller sınıfları FXML tarafından kullanılacağı için açılması gerekiyor.
-    // opens com.hafizesenyil.ibb_education_javafx.controller to javafx.fxml;
+       opens com.hafizesenyil.ibb_education_javafx.controller to javafx.fxml;
 
     // DTO (Data Transfer Object) paketinin içeriği, JavaFX bileşenleri ve Lombok tarafından erişilebilir olmalıdır.
        opens com.hafizesenyil.ibb_education_javafx.dto to javafx.base, lombok;
 
     // DAO (Data Access Object) sınıfları, SQL bağlantısı kullandığı için açılıyor.
-    // opens com.hafizesenyil.ibb_education_javafx.dao to java.sql;
+       opens com.hafizesenyil.ibb_education_javafx.dao to java.sql;
 
     // Veritabanı bağlantısı sağlayan sınıfların da SQL modülüne açık olması gerekiyor.
-    // opens com.hafizesenyil.ibb_education_javafx.database to java.sql;
+       opens com.hafizesenyil.ibb_education_javafx.database to java.sql;
 
     // #######################################################################################
     // Paket dışa aktarmak
@@ -63,13 +67,13 @@ module com.hafizesenyil.ibb_education_javafx {
     exports com.hafizesenyil.ibb_education_javafx;
 
     // DAO sınıflarını dışarıya açıyoruz. Böylece başka modüller veritabanı işlemlerini çağırabilir.
-    // exports com.hafizesenyil.ibb_education_javafx.dao;
+    exports com.hafizesenyil.ibb_education_javafx.dao;
 
     // // Veritabanı bağlantı paketini dış dünyaya açıyoruz. Diğer modüller DB bağlantısını kullanabilir.
-    // exports com.hafizesenyil.ibb_education_javafx.database;
+    exports com.hafizesenyil.ibb_education_javafx.database;
 }
 
-
+// Default
  /*module com.hafizesenyil.ibb_education_javafx {
      requires javafx.controls;
      requires javafx.fxml;
