@@ -29,7 +29,7 @@ public class HelloApplication extends Application {
 
 
         // Başlangıç ekranı: Login
-        // view/admin.fxml
+        // view/admin.fxml --> aşağıdaki kodda login yerine admin yaparsak authencation olmadan sisteme girilebilir
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("view/login.fxml"));
         Parent parent = fxmlLoader.load();
         stage.setTitle("Kullanıcı Yönetimi Login Sayfası");
