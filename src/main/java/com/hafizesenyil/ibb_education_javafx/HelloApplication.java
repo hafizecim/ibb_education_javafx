@@ -82,9 +82,9 @@ public class HelloApplication extends Application {
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
             // 1. kullanıcı
-            ps.setString(1, "hamitmizrak");
+            ps.setString(1, "hafizesenyil");
             ps.setString(2, BCrypt.hashpw("root", BCrypt.gensalt()));
-            ps.setString(3, "hamitmizrak@gmail.com");
+            ps.setString(3, "hfz.snyl@gmail.com");
             ps.setString(4, "USER");
             ps.executeUpdate();
 

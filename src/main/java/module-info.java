@@ -1,5 +1,5 @@
 // Gerekli izinleri verdiğimiz yer
-module com.hamitmizrak.ibb_ecodation_javafx {
+module com.hafizesenyil.ibb_education_javafx {
 
     // JavaFX'in temel bileşenlerini kullanmak için gerekli modüller
     // JavaFX kontrol bileşenlerini (Button, Label, TextField vb.) kullanabilmek için gereklidir.
